@@ -48,6 +48,8 @@ const initialAgent: AgentProfile = {
     contact: '',
     companyName: '',
     phone: '',
+    upiId: '',
+    paymentQrUrl: '',
 };
 
 // ... original initial objects ...

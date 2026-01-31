@@ -135,7 +135,7 @@ export const LeadsList: React.FC = () => {
                     return (
                         <Card
                             key={lead.id}
-                            className={`overflow-hidden transition-all ${isShared ? 'bg-muted/30 border-green-200 opacity-80' : 'hover:shadow-md'}`}
+                            className={`overflow-hidden transition-all ${isShared ? 'bg-primary/10 border-primary/30' : 'hover:shadow-md'}`}
                         >
                             <CardContent className="p-4">
                                 <div className="flex justify-between items-start mb-2">
@@ -145,7 +145,7 @@ export const LeadsList: React.FC = () => {
                                                 {lead.name || 'Unknown Traveller'}
                                             </h4>
                                             {isShared && (
-                                                <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-bold border border-green-200">
+                                                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold border border-primary/20">
                                                     COMPLETED
                                                 </span>
                                             )}
@@ -166,7 +166,7 @@ export const LeadsList: React.FC = () => {
                                                 value={lead.status === 'shared' ? 'shared' : 'pending'}
                                                 onValueChange={(value) => handleStatusChange(lead, value)}
                                             >
-                                                <SelectTrigger className={`h-7 text-[10px] w-32 ${isShared ? 'text-green-600 border-green-200 bg-green-50' : 'text-blue-600 border-blue-200 bg-blue-50'}`}>
+                                                <SelectTrigger className={`h-7 text-[10px] w-32 ${isShared ? 'text-green-600 border-green-200 bg-green-50' : 'text-muted-foreground border-border bg-secondary/50'}`}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>

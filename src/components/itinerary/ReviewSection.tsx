@@ -138,6 +138,29 @@ export const ReviewSection: React.FC = () => {
                     />
                 </div>
 
+                <div className="pt-2 border-t mt-2">
+                    <Label className="mb-2 block font-semibold text-primary">Payment Details (Optional)</Label>
+                    <div className="grid gap-2">
+                        <div>
+                            <Label className="text-xs">UPI ID</Label>
+                            <Input
+                                name="upiId"
+                                value={agent.upiId || ''}
+                                onChange={handleChange}
+                                placeholder="e.g. merchant@upi"
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-xs">Payment QR Code</Label>
+                            <ImageGrid
+                                images={agent.paymentQrUrl ? [agent.paymentQrUrl] : []}
+                                onChange={(images) => setAgentProfile({ paymentQrUrl: images[0] })}
+                                maxImages={1}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 <div className="pt-4" key={itinerary.lastModified}>
                     <PDFDownloadLink
                         document={<ItineraryDocument itinerary={itinerary} agent={agent} />}
@@ -159,9 +182,6 @@ export const ReviewSection: React.FC = () => {
                     <div className="flex gap-2">
                         <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('whatsapp')}>
                             <Share2 size={16} /> WhatsApp
-                        </Button>
-                        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('email')}>
-                            <Mail size={16} /> Email
                         </Button>
                         <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('link')}>
                             <LinkIcon size={16} /> Copy

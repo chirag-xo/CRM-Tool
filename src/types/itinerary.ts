@@ -4,6 +4,8 @@ export interface AgentProfile {
     contact: string;
     phone?: string;
     logoUrl?: string; // Base64 or Object URL
+    upiId?: string;
+    paymentQrUrl?: string;
 }
 
 export interface Vehicle {

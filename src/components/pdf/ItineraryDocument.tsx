@@ -288,6 +288,24 @@ export const ItineraryDocument: React.FC<ItineraryDocumentProps> = ({ itinerary,
                     ))}
                 </View>
 
+                {/* Payment Section */}
+                {(agent.upiId || agent.paymentQrUrl) && (
+                    <View style={{ marginHorizontal: 40, marginBottom: 20, padding: 15, backgroundColor: '#F0FDF4', borderRadius: 8, border: '1px solid #16A34A' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#166534', marginBottom: 8, textTransform: 'uppercase' }}>Payment Details</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {agent.paymentQrUrl && (
+                                <Image src={agent.paymentQrUrl} style={{ width: 80, height: 80, marginRight: 20 }} />
+                            )}
+                            <View>
+                                {agent.upiId && (
+                                    <Text style={{ fontSize: 12, color: '#15803D', marginBottom: 4 }}>UPI ID: {agent.upiId}</Text>
+                                )}
+                                <Text style={{ fontSize: 10, color: '#166534' }}>Scan to pay via any UPI app</Text>
+                            </View>
+                        </View>
+                    </View>
+                )}
+
                 {/* Footer */}
                 <View style={styles.footer}>
                     <Text style={styles.footerText}>Need assistance? Contact us at {agent.phone} or {agent.contact}</Text>
