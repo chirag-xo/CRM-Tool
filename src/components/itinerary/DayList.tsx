@@ -12,8 +12,8 @@ export const DayList: React.FC = () => {
         <div className="w-full mb-8">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold tracking-wide uppercase text-muted-foreground text-xs">Step 2: Itinerary Builder</h2>
-                <Button onClick={addDay} size="sm" className="gap-2">
-                    <Plus size={16} /> Add Day
+                <Button onClick={addDay} size="default" className="gap-2 shadow-sm">
+                    <Plus size={18} /> Add Day
                 </Button>
             </div>
 

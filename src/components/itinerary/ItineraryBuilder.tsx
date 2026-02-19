@@ -6,6 +6,7 @@ import { DayList } from './DayList';
 import { ReviewSection } from './ReviewSection';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
 export default function ItineraryBuilder() {
@@ -66,13 +67,26 @@ export default function ItineraryBuilder() {
     };
 
     return (
-        <div className="max-w-md mx-auto p-4 pb-20">
-            <header className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-foreground">Agent CRM</h1>
-                <p className="text-xs text-muted-foreground">Manage leads, itineraries & growth</p>
+        <div className="min-h-screen bg-background text-foreground font-sans">
+            {/* Taxio-style App Header */}
+            <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 pb-4 pt-4 px-6 md:px-8 mb-6">
+                <div className="max-w-md mx-auto flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-black tracking-tight text-primary-foreground bg-primary px-2 rounded-md inline-block">CRM</h1>
+                        <span className="ml-2 font-bold text-lg">Agent</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <ModeToggle />
+                        <div className="h-8 w-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs">
+                            AG
+                        </div>
+                    </div>
+                </div>
             </header>
 
-            {renderView()}
+            <main className="max-w-md mx-auto px-4 pb-20">
+                {renderView()}
+            </main>
         </div>
     );
 }

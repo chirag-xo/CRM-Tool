@@ -148,8 +148,10 @@ export const TravellerForm: React.FC = () => {
                         />
                     </div>
                 </div>
-                <div className="flex justify-end">
-                    <Button onClick={handleSave} size="sm">Save & Continue</Button>
+                <div className="flex justify-end pt-2">
+                    <Button onClick={handleSave} size="lg" className="w-full sm:w-auto font-bold shadow-md">
+                        Save & Continue
+                    </Button>
                 </div>
             </CardContent>
         </Card >

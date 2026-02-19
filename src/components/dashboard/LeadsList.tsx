@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { MapPin, Calendar, Phone, Loader2, CheckCircle2, Clock, Trash2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -135,19 +136,19 @@ export const LeadsList: React.FC = () => {
                     return (
                         <Card
                             key={lead.id}
-                            className={`overflow-hidden transition-all ${isShared ? 'bg-primary/10 border-primary/30' : 'hover:shadow-md'}`}
+                            className={`transition-all border-none ${isShared ? 'bg-muted/30' : 'bg-card'}`}
                         >
                             <CardContent className="p-4">
                                 <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h4 className={`font-medium text-lg ${isShared ? 'text-muted-foreground decoration-slate-400' : ''}`}>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3">
+                                            <h4 className={`font-bold text-lg ${isShared ? 'text-muted-foreground' : 'text-foreground'}`}>
                                                 {lead.name || 'Unknown Traveller'}
                                             </h4>
                                             {isShared && (
-                                                <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold border border-primary/20">
-                                                    COMPLETED
-                                                </span>
+                                                <Badge variant="secondary" className="px-2 py-0.5 text-[10px] uppercase">
+                                                    Completed
+                                                </Badge>
                                             )}
                                         </div>
                                         <div className="flex items-center text-sm text-muted-foreground gap-1 mt-1">
@@ -166,7 +167,7 @@ export const LeadsList: React.FC = () => {
                                                 value={lead.status === 'shared' ? 'shared' : 'pending'}
                                                 onValueChange={(value) => handleStatusChange(lead, value)}
                                             >
-                                                <SelectTrigger className={`h-7 text-[10px] w-32 ${isShared ? 'text-green-600 border-green-200 bg-green-50' : 'text-muted-foreground border-border bg-secondary/50'}`}>
+                                                <SelectTrigger className={`h-8 text-xs w-32 border-none ${isShared ? 'bg-green-100/50 text-green-700' : 'bg-orange-100/50 text-orange-700'}`}>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -201,7 +202,7 @@ export const LeadsList: React.FC = () => {
 
                                 <div className="flex gap-2">
                                     <Button
-                                        className={`flex-1 ${isShared ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80' : ''}`}
+                                        className="flex-1"
                                         size="sm"
                                         variant={isShared ? "outline" : "default"}
                                         onClick={() => handleBuildItinerary(lead)}

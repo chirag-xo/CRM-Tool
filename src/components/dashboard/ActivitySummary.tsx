@@ -47,27 +47,33 @@ export const ActivitySummary: React.FC = () => {
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
-                <Card className="shadow-sm">
+                <Card className="border-none bg-primary/10">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                            <Users className="w-3 h-3" /> Leads Generated
+                        <CardTitle className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-3">
+                            <div className="p-2 bg-primary/20 rounded-full">
+                                <Users className="w-4 h-4 text-primary-foreground" />
+                            </div>
+                            Leads Generated
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.leadsGenerated}</div>
-                        <p className="text-[10px] text-muted-foreground mt-1">Travellers added</p>
+                        <div className="text-4xl font-black text-foreground">{stats.leadsGenerated}</div>
+                        <p className="text-[10px] text-muted-foreground mt-1 font-medium">Travellers added</p>
                     </CardContent>
                 </Card>
 
-                <Card className="shadow-sm">
+                <Card className="border-none bg-secondary/5">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                            <Share2 className="w-3 h-3" /> Itineraries Shared
+                        <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-3">
+                            <div className="p-2 bg-secondary/10 rounded-full">
+                                <Share2 className="w-4 h-4 text-secondary" />
+                            </div>
+                            Itineraries Shared
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stats.itinerariesShared}</div>
-                        <p className="text-[10px] text-muted-foreground mt-1">Via WhatsApp/Email</p>
+                        <div className="text-4xl font-black text-foreground">{stats.itinerariesShared}</div>
+                        <p className="text-[10px] text-muted-foreground mt-1 font-medium">Via WhatsApp/Email</p>
                     </CardContent>
                 </Card>
             </div>
