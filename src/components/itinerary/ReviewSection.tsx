@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Share2, Mail, Link as LinkIcon } from 'lucide-react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Share2, Mail, Link as LinkIcon, Loader2 } from 'lucide-react';
+import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
 import { ItineraryDocument } from '@/components/pdf/ItineraryDocument';
 import { Itinerary } from '@/types/itinerary';
 import { ImageGrid } from './ImageGrid';
@@ -14,15 +14,41 @@ export const ReviewSection: React.FC = () => {
     const { traveller, setTraveller, days, agent, setAgentProfile, triggerStatsUpdate, activeLeadId } = useItineraryStore();
     const [isClient, setIsClient] = useState(false);
 
+    const [isSharing, setIsSharing] = useState(false);
+
     const handleShare = async (method: 'whatsapp' | 'email' | 'link') => {
         try {
+            setIsSharing(true);
+
+            // 1. Generate PDF dynamically
+            const doc = <ItineraryDocument itinerary={itinerary} agent={agent} />;
+            const asPdf = pdf(doc);
+            const blob = await asPdf.toBlob();
+
+            // 2. Upload to secure Next.js API route
+            const formData = new FormData();
+            formData.append('pdf', blob, `Itinerary_${traveller.destination.replace(/\s+/g, '')}.pdf`);
+
+            const uploadRes = await fetch('/api/upload-pdf', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) {
+                const errData = await uploadRes.json();
+                throw new Error(errData.error || 'Upload failed');
+            }
+
+            const { publicUrl } = await uploadRes.json();
+
+            // 4. Record share stats
             await fetch('/api/actions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'log_share',
                     data: {
-                        itinerary_id: activeLeadId || 'temp-id', // Link share to the Lead ID
+                        itinerary_id: activeLeadId || 'temp-id',
                         shared_via: method,
                         created_by: null
                     }
@@ -30,28 +56,16 @@ export const ReviewSection: React.FC = () => {
             });
             triggerStatsUpdate();
 
-            // Actual share logic
+            // 5. Build share text with URL
             const destination = traveller.destination || 'your trip';
-            const text = `Hello! Please find attached the travel itinerary PDF for ${destination}. Let me know if you need any changes!`;
+            const text = `Hello! Please find the travel itinerary for ${destination} here: ${publicUrl} Let me know if you need any changes!`;
 
             if (method === 'whatsapp') {
-                // Use the lead's phone number if available
                 const phone = traveller.phone?.replace(/\D/g, '') || '';
                 const url = phone
                     ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
                     : `https://wa.me/?text=${encodeURIComponent(text)}`;
-
-                // Open WhatsApp
                 window.open(url, '_blank');
-
-                // HACK: Trigger the PDF download button programmatically so the user has the file to attach
-                // We'll add an ID to the download button to target it
-                setTimeout(() => {
-                    const downloadBtn = document.getElementById('pdf-download-btn');
-                    if (downloadBtn) downloadBtn.click();
-                    alert('WhatsApp opened! Please attach the downloaded PDF file to the chat.');
-                }, 1000);
-
             } else if (method === 'email') {
                 window.location.href = `mailto:?subject=Itinerary: ${destination}&body=${encodeURIComponent(text)}`;
             } else {
@@ -59,7 +73,10 @@ export const ReviewSection: React.FC = () => {
                 alert('Link copied to clipboard!');
             }
         } catch (error) {
-            console.error(error);
+            console.error('Share Error:', error);
+            alert('Failed to share itinerary. Please try downloading it instead.');
+        } finally {
+            setIsSharing(false);
         }
     };
 
@@ -180,11 +197,11 @@ export const ReviewSection: React.FC = () => {
                 <div className="pt-2 border-t mt-4">
                     <Label className="mb-2 block">Share Itinerary</Label>
                     <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('whatsapp')}>
-                            <Share2 size={16} /> WhatsApp
+                        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('whatsapp')} disabled={isSharing}>
+                            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />} WhatsApp
                         </Button>
-                        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('link')}>
-                            <LinkIcon size={16} /> Copy
+                        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleShare('link')} disabled={isSharing}>
+                            {isSharing ? <Loader2 size={16} className="animate-spin" /> : <LinkIcon size={16} />} Copy
                         </Button>
                     </div>
                 </div>
