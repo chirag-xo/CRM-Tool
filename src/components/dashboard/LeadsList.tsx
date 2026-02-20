@@ -21,7 +21,8 @@ interface Lead {
 export const LeadsList: React.FC = () => {
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
-    const { setView, setActiveLead, setTraveller, statsTrigger, triggerStatsUpdate } = useItineraryStore();
+    const [generatingId, setGeneratingId] = useState<string | null>(null);
+    const { setView, setActiveLead, setTraveller, setDays, statsTrigger, triggerStatsUpdate } = useItineraryStore();
 
     useEffect(() => {
         fetchLeads();
@@ -41,18 +42,55 @@ export const LeadsList: React.FC = () => {
         }
     };
 
-    const handleBuildItinerary = (lead: Lead) => {
+    const handleBuildItinerary = async (lead: Lead) => {
         setActiveLead(lead.id);
+
+        const startDate = lead.start_date || new Date().toISOString().split('T')[0];
+        const endDate = lead.end_date || new Date().toISOString().split('T')[0];
 
         // Pre-fill traveller details from the lead
         setTraveller({
             name: lead.name || '',
             phone: lead.phone || '',
             destination: lead.destination || '',
-            startDate: lead.start_date || new Date().toISOString().split('T')[0],
-            endDate: lead.end_date || new Date().toISOString().split('T')[0],
+            startDate: startDate,
+            endDate: endDate,
             paxCount: lead.travellers || 2
         });
+
+        // Call the AI Generation API if destination exists
+        if (lead.destination && lead.status !== 'shared') {
+            setGeneratingId(lead.id);
+            try {
+                // Calculate days roughly
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const diffTime = Math.abs(end.getTime() - start.getTime());
+                const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                const res = await fetch('/api/itinerary/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        leadId: lead.id,
+                        destination: lead.destination,
+                        days: days > 0 ? days : 3,
+                        travellers: lead.travellers || 2
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.itinerary?.days) {
+                        setDays(data.itinerary.days);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to generate itinerary API:", error);
+            } finally {
+                setGeneratingId(null);
+            }
+        }
 
         // Navigate to Builder
         setView('builder');
@@ -206,7 +244,9 @@ export const LeadsList: React.FC = () => {
                                         size="sm"
                                         variant={isShared ? "outline" : "default"}
                                         onClick={() => handleBuildItinerary(lead)}
+                                        disabled={generatingId === lead.id}
                                     >
+                                        {generatingId === lead.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                         {isShared ? 'Edit Itinerary' : 'Build Itinerary'}
                                     </Button>
 
