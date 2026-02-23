@@ -30,6 +30,7 @@ interface ItineraryState {
     // New Actions
     setView: (view: 'lead-creation' | 'dashboard' | 'builder' | 'export') => void;
     setActiveLead: (id: string | null) => void;
+    loadItinerary: (itinerary: Partial<Itinerary>) => void;
 }
 
 const initialTraveller: TravellerDetails = {
@@ -158,6 +159,14 @@ export const useItineraryStore = create<ItineraryState>()(
             // New Actions Implementation
             setView: (view) => set({ view }),
             setActiveLead: (activeLeadId) => set({ activeLeadId }),
+            loadItinerary: (itinerary) => {
+                if (itinerary.traveller) {
+                    set((state) => ({ traveller: { ...state.traveller, ...itinerary.traveller } }));
+                }
+                if (itinerary.days) {
+                    set({ days: itinerary.days });
+                }
+            },
         }),
         {
             name: 'itinerary-storage',

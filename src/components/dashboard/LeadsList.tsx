@@ -22,7 +22,7 @@ export const LeadsList: React.FC = () => {
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
     const [generatingId, setGeneratingId] = useState<string | null>(null);
-    const { setView, setActiveLead, setTraveller, setDays, statsTrigger, triggerStatsUpdate } = useItineraryStore();
+    const { setView, setActiveLead, setTraveller, setDays, loadItinerary, statsTrigger, triggerStatsUpdate } = useItineraryStore();
 
     useEffect(() => {
         fetchLeads();
@@ -81,8 +81,8 @@ export const LeadsList: React.FC = () => {
 
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.itinerary?.days) {
-                        setDays(data.itinerary.days);
+                    if (data.itinerary) {
+                        loadItinerary(data.itinerary);
                     }
                 }
             } catch (error) {

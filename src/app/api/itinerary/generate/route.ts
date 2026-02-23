@@ -37,12 +37,7 @@ export async function POST(request: Request) {
 
         // 2. Not found, generate via AI (Fallback)
         console.log(`[Cache Miss] Generating itinerary for ${normalizedDest} (${days} days) via AI...`);
-        const aiDays = await generateItineraryAI(destination, days, travellers);
-
-        // Assemble the complete itinerary JSON object structure exactly as the app expects
-        const finalItineraryStructure = {
-            days: aiDays
-        };
+        const finalItineraryStructure = await generateItineraryAI(destination, days, travellers);
 
         // 3. Save specific generation to lead tracked table
         await supabaseAdmin
